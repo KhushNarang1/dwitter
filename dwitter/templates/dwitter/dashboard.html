@@ -1,54 +1,48 @@
-<!-- dwitter/templates/dwitter/dashboard.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="flex justify-between">
+    <div class="bg-gray-200 h-screen w-1/5 fixed top-0 left-0 overflow-y-auto pt-5">
+        <a href="#home" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Home</a>
+        <a href="#about" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">About</a>
+        <a href="#services" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Services</a>
+        <a href="#contact" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Contact</a>
+    </div>
 
-<div class="column">
-    
-    {% for dweet in dweets %}
-        <div class="box">
-            {{dweet.body}}
-            <span class="is-small has-text-grey-light">
-                ({{ dweet.created_at }} by {{ dweet.user.username }}
-            </span>
-        </div>
-    {% endfor %}
+    <div class="flex-1 ml-2">
+        {% for dweet in dweets %}
+            <div class="box mb-4">
+                {{dweet.body}}
+                <span class="text-sm text-gray-500">
+                    ({{ dweet.created_at }} by {{ dweet.user.username }})
+                </span>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
-<div class="column is-one-third">
-
-    <div class="block">
-        <a href="{% url 'dwitter:profile_list' %} ">
-            <button class="button is-dark is-outlined is-fullwidth">
-                All Profiles
-            </button>
-        </a>
+<div class="mt-8">
+    <div>
+        <a href="{% url 'dwitter:profile_list' %}">All Profiles</a>
     </div>
 
-    <div class="block">
-        <a href="{% url 'dwitter:profile' request.user.profile.id %} ">
-            <button class="button is-success is-light is-outlined is-fullwidth">
-                My Profile
-            </button>
-        </a>
+    <div class="mt-4">
+        <a href="{% url 'dwitter:profile' request.user.profile.id %}">My Profile</a>
     </div>
 
-    <div class="block">
+    <div class="mt-4">
         <div class="block">
-            <h2 class="title is-2">Add a Dweet</p>
+            <h2 class="text-2xl">Add a Dweet</h2>
         </div>
         <div class="block">
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button class="button is-success is-fullwidth is-medium mt-5"
+                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mt-5 rounded"
                         type="submit">Dweet
                 </button>
             </form>
         </div>
     </div>
-
 </div>
-
 {% endblock content %}

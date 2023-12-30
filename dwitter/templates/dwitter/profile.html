@@ -1,103 +1,63 @@
-<!-- dwitter/templates/dwitter/profile.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div class="column">
-
-    <div class="block">
-    <h1 class="title is-1">
-        {{profile.user.username|upper}}'s Dweets
-    </h1>
-
-    <form method="post">
-        {% csrf_token %}
-        <div class="buttons has-addons">
-        {% if profile in user.profile.follows.all %}
-            <button class="button is-success is-static">
-                Follow
-            </button>
-            <button class="button is-danger"
-                    name="follow"
-                    value="unfollow">
-                Unfollow
-            </button>
-        {% else %}
-            <button class="button is-success"
-                    name="follow"
-                    value="follow">
-                Follow
-            </button>
-            <button class="button is-danger is-static">
-                Unfollow
-            </button>
-        {% endif %}
-        </div>
-    </form>
+<div class="flex justify-between">
+    <div class="bg-gray-200 h-screen w-1/5 fixed top-0 left-0 overflow-y-auto pt-5">
+        <a href="#home" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Home</a>
+        <a href="#about" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">About</a>
+        <a href="#services" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Services</a>
+        <a href="#contact" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Contact</a>
     </div>
 
-    <div class="content">
+    <div class="flex-1 ml-2">
+        <h1 class="text-uppercase">{{ profile.user.username }}'s Dweets</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {% if profile in user.profile.follows.all %}
+                    <button class="mr-2">Follow</button>
+                    <button name="follow" value="unfollow">Unfollow</button>
+                {% else %}
+                    <button name="follow" value="follow">Follow</button>
+                    <button class="ml-2">Unfollow</button>
+                {% endif %}
+            </div>
+        </form>
+
         {% for dweet in profile.user.dweets.all %}
-            <div class="box">
-                {{ dweet.body }}
-                <span class="is-small has-text-grey-light">
-                    ({{ dweet.created_at }})
-                </span>
+            <div class="mb-3">
+                <p>{{ dweet.body }}</p>
+                <span>({{ dweet.created_at }})</span>
             </div>
         {% endfor %}
     </div>
-
 </div>
 
-<div class="column is-one-third">
-
-    <div class="block">
-        <a href="{% url 'dwitter:profile_list' %}">
-            <button class="button is-dark is-outlined is-fullwidth">
-                All Profiles
-            </button>
-        </a>
-    </div>
-
-    <div class="block">
-        <h3 class="title is-4">
-            {{profile.user.username}} follows:
-        </h3>
-        <div class="content">
-            <ul>
-            {% for following in profile.follows.all %}
-                <li>
-                    <a href="{% url 'dwitter:profile' following.id %} ">
-                        {{ following }}
-                    </a>
-                </li>
-            {% endfor %}
-            </ul>
-        </div>
-    </div>
-
-    <div class="block">
-        <h3 class="title is-4">
-            {{profile.user.username}} is followed by:
-        </h3>
-        <div class="content">
-            <ul>
-            {% for follower in profile.followed_by.all %}
-                <li>
-                    <a href="{% url 'dwitter:profile' follower.id %} ">
-                        {{ follower }}
-                    </a>
-                </li>
-            {% endfor %}
-            </ul>
-        </div>
-    </div>
-
+<div class="mt-8">
     <div>
-        
+        <a href="{% url 'dwitter:profile_list' %}">All Profiles</a>
     </div>
 
-</div>
+    <div class="mt-4">
+        <h3>{{ profile.user.username }} follows:</h3>
+        <ul class="list-none">
+            {% for following in profile.follows.all %}
+                {% if following != profile %}
+                    <li><a href="{% url 'dwitter:profile' following.id %}">{{ following }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
 
+    <div class="mt-4">
+        <h3>{{ profile.user.username }} is followed by:</h3>
+        <ul class="list-none">
+            {% for follower in profile.followed_by.all %}
+                {% if follower != profile %}
+                    <li><a href="{% url 'dwitter:profile' follower.id %}">{{ follower }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endblock content %}
