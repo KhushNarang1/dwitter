@@ -8,17 +8,17 @@
         <a href="#services" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Services</a>
         <a href="#contact" class="block py-2 px-4 text-gray-700 hover:bg-gray-300">Contact</a>
     </div>
+</div>
 
-    <div class="flex-1 ml-2">
-        {% for dweet in dweets %}
-            <div class="box mb-4">
-                {{dweet.body}}
-                <span class="text-sm text-gray-500">
-                    ({{ dweet.created_at }} by {{ dweet.user.username }})
-                </span>
-            </div>
-        {% endfor %}
-    </div>
+<div class="flex-1 ml-2">
+    {% for dweet in dweets %}
+        <div class="box mb-4">
+            {{dweet.body}}
+            <span class="text-sm text-gray-500">
+                ({{ dweet.created_at }} by {{ dweet.user.username }})
+            </span>
+        </div>
+    {% endfor %}
 </div>
 
 <div class="mt-8">
