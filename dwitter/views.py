@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
@@ -46,10 +46,41 @@ def LoginPage(request):
 
     return render (request,'dwitter/login.html')
 
+@login_required(login_url='dwitter:login')
+def delete_dweet(request, dweet_id):
+    dweet = get_object_or_404(Dweet, pk=dweet_id)
+    if request.user != dweet.user:
+        # If not the owner, you may choose to redirect or show an error message
+        return HttpResponseRedirect('/error-page')  # Redirect to an error page
+    else:
+        dweet.delete()
+    # print(request.user.id)
+    return redirect('dwitter:profile', pk=request.user.pk)
+
+
+@login_required(login_url='dwitter:login')
+def edit_dweet(request, dweet_id):
+    dweet = get_object_or_404(Dweet, pk=dweet_id)
+    
+    # Checking if the logged-in user is the owner of the dweet
+    if request.user != dweet.user:
+        # If not the owner, you may choose to redirect or show an error message
+        return HttpResponseRedirect('/error-page')  # Redirect to an error page
+    
+    if request.method == 'POST':
+        form = DweetForm(request.POST, instance=dweet)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(f'/profile/{request.user.pk}/')
+    else:
+        form = DweetForm(instance=dweet)
+    
+    return render(request, 'dwitter/edit_dweet.html', {'form': form})
 
 
 @login_required(login_url='dwitter:login')
 def profile(request, pk):
+    print(pk, request.user.pk)
     if not hasattr(request.user, 'profile'):
         missing_profile = Profile(user=request.user.profile)
         #  profile is an attribute or a related object linked to the User model through a one-to-one relationship.
@@ -67,7 +98,13 @@ def profile(request, pk):
             current_user_profile.follows.remove(profile)
         current_user_profile.save()
 
-    return render(request, "dwitter/profile.html", {"profile" : profile})
+    
+    
+    my_dweets = Dweet.objects.filter(
+        user = profile.user
+    ).order_by("-created_at")
+
+    return render(request, "dwitter/profile.html", {"profile" : profile, "dweets" : my_dweets})
 
 @login_required(login_url='dwitter:login')
 def dashboard(request):

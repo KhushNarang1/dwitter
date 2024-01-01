@@ -5,13 +5,17 @@
     <title>Dwitter</title>
     <!-- Include the Tailwind CSS framework for styling -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mx-auto mt-5">
-        <div class="grid grid-cols-3 gap-4">
-            {% block content %}
+    <div class="container mx-0 mt-0">
+        {% block content %}
 
-            {% endblock content %}
-        </div>
+        {% endblock content %}
     </div>
 </body>
