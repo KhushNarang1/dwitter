@@ -1,84 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div >
-    <!-- <div> -->
-    <div class="bg-blue-600 text-white h-screen w-1/6  top-0 left-0 overflow-y-auto pt-5 fixed">
-        <a href="{% url 'dwitter:dashboard' %}" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">Home</a>
-        <a href="#about" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">About</a>
-        <a href="#services" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">Services</a>
-        <a href="#contact" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">Contact</a>
-        <a href="{% url 'dwitter:profile_list' %}" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">All Profiles</a>
-        <a href="{% url 'dwitter:profile' request.user.profile.id %}" class="block py-2 px-4 hover:bg-blue-500">My Profile</a>
-    </div>    
-
-    <div class="mt-8 p-6 w-5/6">
-        <div class="mt-8 border border-gray-300 rounded-lg shadow-lg p-4">
-            <!-- <h3 class="text-lg font-semibold mb-3"></h3> -->
-            {% for dweet in dweets %}
-                <div class="mb-3 bg-white rounded-lg shadow-md p-4">
-                    <p>{{ dweet.body }}</p>
-                    <span class="text-sm text-gray-500">({{ dweet.created_at }})</span> 
-                    <!-- {% if user.is_authenticated and dweet.user == user %}
-                        <a href="{% url 'dwitter:edit_dweet' dweet.id %}" class="text-blue-500 mr-2">Edit</a>
-                        <a href="{% url 'dwitter:delete_dweet' dweet.id %}" class="text-red-500">Delete</a>
-                    {% endif %} -->
-                </div>
-            {% endfor %}
-        </div>
+<div class="grid grid-cols-3 gap-4">
+    <div class="flex justify-between">
+        <div class="bg-blue-600 text-white h-screen w-1/6  top-0 left-0 overflow-y-auto pt-5 fixed">
+            <a href="{% url 'dwitter:dashboard' %}" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">Home</a>
+            <a href="#about" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">About</a>
+            <a href="#services" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">Services</a>
+            <a href="#contact" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">Contact</a>
+            <a href="{% url 'dwitter:profile_list' %}" class="block py-2 px-4 hover:bg-blue-500 border-b border-blue-500">All Profiles</a>
+            <a href="{% url 'dwitter:profile' request.user.profile.id %}" class="block py-2 px-4 hover:bg-blue-500">My Profile</a>
+        </div>    
     </div>
 
-    <div class="mt-8 border border-gray-300 rounded-lg shadow-lg bg-white">
-        <div class="p-6 max-w-md mx-auto">
-            <div class="mt-4">
-                <div class="block">
-                    <h2 class="text-2xl font-semibold text-gray-700 border-b-2 pb-2">Add a Dweet</h2>
-                </div>
-                <div class="block">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mt-5 rounded border border-green-600"
-                                type="submit">Dweet
-                        </button>
-                    </form>
-                </div>
+    <div class="flex-1 ml-2">
+        {% for dweet in dweets %}
+            <div class="box mb-4">
+                {{dweet.body}}
+                <span class="text-sm text-gray-500">
+                    ({{ dweet.created_at }} by {{ dweet.user.username }})
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="mt-8">
+
+        <div class="mt-4">
+            <div class="block">
+                <h2 class="text-2xl">Add a Dweet</h2>
+            </div>
+            <div class="block">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mt-5 rounded"
+                            type="submit">Dweet
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
-
-
-
 {% endblock content %}
 
 
-<!-- <div class="flex-1 ml-2">
-    {% for dweet in dweets %}
-        <div class="box mb-4">
-            {{dweet.body}}
-            <span class="text-sm text-gray-500">
-                ({{ dweet.created_at }} by {{ dweet.user.username }})
-            </span>
-        </div>
-    {% endfor %}
-</div> -->
-
-
-<!-- <div class="mt-8">
-
-    <div class="mt-4">
-        <div class="block">
-            <h2 class="text-2xl">Add a Dweet</h2>
-        </div>
-        <div class="block">
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mt-5 rounded"
-                        type="submit">Dweet
-                </button>
-            </form>
-        </div>
-    </div>
-</div> -->
