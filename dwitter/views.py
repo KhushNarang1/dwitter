@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 
 from .models import Profile, Dweet
-from .forms import DweetForm
+from .forms import DweetForm, SearchForm
 from django.contrib.auth.models import User
 
 def SignupPage(request):  # sourcery skip: last-if-guard
@@ -122,8 +122,18 @@ def dashboard(request):
     return render(request, "dwitter/dashboard.html", {"form" : form , "dweets" : followed_dweets})
 
 @login_required(login_url='dwitter:login')
-def profile_list(request):
-    profiles = Profile.objects.exclude(user = request.user)
-    return render(request, "dwitter/profile_list.html", {"profiles" : profiles})
+def profile_list(request):  # sourcery skip: use-named-expression
+    profiles = Profile.objects.all()
+
+    search_query = request.GET.get('search_query')
+    if search_query:
+        profiles = profiles.filter(user__username__icontains=search_query)
+
+    context = {
+        'profiles': profiles,
+        'search_form': SearchForm(),
+    }
+    
+    return render(request, "dwitter/profile_list.html", context)
 
 # Create your views here.
