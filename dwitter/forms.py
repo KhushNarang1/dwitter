@@ -15,7 +15,7 @@ class DweetForm(forms.ModelForm):
 
     class Meta:
         model = Dweet # explains which model is associated with the class
-        exclude = ("user", )
+        exclude = ("user","likes" )
 
 class SearchForm(forms.Form):
     search_query = forms.CharField(label='Search by Name', max_length=100)

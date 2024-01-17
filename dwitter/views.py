@@ -2,10 +2,17 @@ from django.shortcuts import render, redirect, HttpResponse, get_object_or_404, 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 from .models import Profile, Dweet
 from .forms import DweetForm, SearchForm
 from django.contrib.auth.models import User
+
+def like_post(request, pk):
+    dweet = get_object_or_404(Dweet, id = request.POST.get('post_id'))
+    dweet.likes.add(request.user)
+    print("hi")
+    return HttpResponseRedirect(reverse('dwitter:dashboard'))
 
 def SignupPage(request):  # sourcery skip: last-if-guard
     if request.method == 'POST':
@@ -107,7 +114,7 @@ def profile(request, pk):
     return render(request, "dwitter/profile.html", {"profile" : profile, "dweets" : my_dweets})
 
 @login_required(login_url='dwitter:login')
-def dashboard(request):
+def dashboard(request):  # sourcery skip: use-named-expression
     form = DweetForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         dweet = form.save(commit = False)
@@ -118,6 +125,7 @@ def dashboard(request):
     followed_dweets = Dweet.objects.filter(
         user__profile__in = request.user.profile.follows.all()
     ).order_by("-created_at")
+
 
     return render(request, "dwitter/dashboard.html", {"form" : form , "dweets" : followed_dweets})
 

@@ -19,8 +19,14 @@
                 {{dweet.body}}
                 <span class="text-sm text-gray-500">
                     ({{ dweet.created_at }} by {{ dweet.user.username }})
-                </span>
+                </span> 
+                <form action="{% url 'dwitter:like_post' dweet.id %}" method="post">
+                    {% csrf_token %}
+                    <button type = "submit" name = "post_id" value="{{ dweet.id }}" class="btn btn-primary btn-sm">Like</button>
+                </form> --> {{ dweet.total_likes }}
             </div>
+            <hr>
+            <br/>
         {% endfor %}
     </div>
 

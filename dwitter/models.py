@@ -9,12 +9,18 @@ class Dweet(models.Model):
     )
     body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name='blog_posts')
+
 
     def __str__(self):
         return (f"{self.user.username} "
                 f"({self.created_at:%Y-%m-%d %H:%M}): "
-                f"{self.body[:30]}..."
+                f"{self.body[:30]}"
             )
+    def total_likes(self):
+        return self.likes.count()
+    
+
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
