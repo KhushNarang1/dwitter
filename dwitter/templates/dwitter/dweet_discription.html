@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="height: 500%; width: 100%;">
+    <h1>{{ dweet.body }}</h1>
+    <form action="{% url 'dwitter:like_post' dweet.id %}" method="post">
+        {% csrf_token %}
+        <button type = "submit" name = "post_id" value = "{{ dweet.id }}" class = "btn-primary btn-sm bg-green-500">Like</button>
+    </form> :- {{dweet.total_likes}}
+</div>
+
+{% endblock content %}

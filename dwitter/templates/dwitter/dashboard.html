@@ -16,14 +16,15 @@
     <div class="flex-1 ml-2">
         {% for dweet in dweets %}
             <div class="box mb-4">
-                {{dweet.body}}
+                <a href="{% url 'dwitter:dweet_discription' dweet.id %}">{{dweet.body}}</a>
                 <span class="text-sm text-gray-500">
                     ({{ dweet.created_at }} by {{ dweet.user.username }})
                 </span> 
-                <form action="{% url 'dwitter:like_post' dweet.id %}" method="post">
+                <!-- <form action="{% url 'dwitter:like_post' dweet.id %}" method="post">
                     {% csrf_token %}
                     <button type = "submit" name = "post_id" value="{{ dweet.id }}" class="btn btn-primary btn-sm">Like</button>
-                </form> --> {{ dweet.total_likes }}
+                </form>  -->
+                <p>Likes :- {{ dweet.total_likes }}</p>
             </div>
             <hr>
             <br/>

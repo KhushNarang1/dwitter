@@ -8,11 +8,7 @@ from .models import Profile, Dweet
 from .forms import DweetForm, SearchForm
 from django.contrib.auth.models import User
 
-def like_post(request, pk):
-    dweet = get_object_or_404(Dweet, id = request.POST.get('post_id'))
-    dweet.likes.add(request.user)
-    print("hi")
-    return HttpResponseRedirect(reverse('dwitter:dashboard'))
+
 
 def SignupPage(request):  # sourcery skip: last-if-guard
     if request.method == 'POST':
@@ -144,4 +140,17 @@ def profile_list(request):  # sourcery skip: use-named-expression
     
     return render(request, "dwitter/profile_list.html", context)
 
+
+@login_required(login_url='dwitter:login')
+def dweet_discription(request, dweet_id):
+    dweet = get_object_or_404(Dweet, pk=dweet_id)
+    context = {
+        'dweet' : dweet,
+    }
+    return render(request, "dwitter/dweet_discription.html", context)
 # Create your views here.
+
+def like_post(request, dweet_id):
+    dweet = get_object_or_404(Dweet, id = request.POST.get('post_id'))
+    dweet.likes.add(request.user)
+    return HttpResponseRedirect(reverse('dwitter:dashboard'))
