@@ -151,6 +151,13 @@ def dweet_discription(request, dweet_id):
 # Create your views here.
 
 def like_post(request, dweet_id):
-    dweet = get_object_or_404(Dweet, id = request.POST.get('post_id'))
-    dweet.likes.add(request.user)
-    return HttpResponseRedirect(reverse('dwitter:dweet_discription', kwargs = {'dweet_id' : dweet_id}))
+    dweet = get_object_or_404(Dweet, id=request.POST.get('post_id'))
+
+    if request.user in dweet.likes.all():
+        dweet.likes.remove(request.user)
+    else:
+        dweet.likes.add(request.user)
+
+    return HttpResponseRedirect(reverse('dwitter:dweet_discription', kwargs={'dweet_id': dweet_id}))
+
+
