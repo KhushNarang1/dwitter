@@ -110,9 +110,13 @@ def profile(request, pk):
 
 @login_required(login_url='dwitter:login')
 def dashboard(request):  # sourcery skip: use-named-expression
-    form = DweetForm(request.POST or None)
+    form = DweetForm(request.POST or None,request.FILES or None)
+    if(request.method=='POST'):
+        print(request.POST,request.FILES)
     if request.method == "POST" and form.is_valid():
+        # if(request.FILES!=None)/
         dweet = form.save(commit = False)
+        # print(dweet)
         dweet.user = request.user
         dweet.save()
         form.save_m2m()

@@ -37,6 +37,7 @@ class Dweet(models.Model):
         User, related_name="dweets", on_delete=models.CASCADE
     )
     body = models.CharField(max_length=140)
+    header_image = models.ImageField(null=True, blank=True, upload_to="images/")
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='blog_posts')
     categories = models.ManyToManyField(DweetCategory, related_name='dweetcategories', blank = True)
@@ -50,8 +51,6 @@ class Dweet(models.Model):
     def total_likes(self):
         return self.likes.count()
     
-    def total_categories(self):
-        return self.categories.count()
     
     
     

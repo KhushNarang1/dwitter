@@ -20,10 +20,18 @@ class DweetForm(forms.ModelForm):
         label = "Categories",
     )
     
+    header_image = forms.ImageField(
+        required=False,
+        label="Header Image",  # Customize the label as needed
+    )
 
     class Meta:
         model = Dweet # explains which model is associated with the class
-        exclude = ("user","likes" )
+        fields = ["body", "header_image", "categories"]  # Include "header_image" in the fields
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["header_image"].widget.attrs.update({"class": "your-custom-class"})  # Add any additional widget attributes if needed
 
 class CommentForm(forms.ModelForm):
     body = forms.CharField(
