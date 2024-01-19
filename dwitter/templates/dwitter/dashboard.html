@@ -20,11 +20,17 @@
                 <span class="text-sm text-gray-500">
                     ({{ dweet.created_at }} by {{ dweet.user.username }})
                 </span> 
-                <!-- <form action="{% url 'dwitter:like_post' dweet.id %}" method="post">
-                    {% csrf_token %}
-                    <button type = "submit" name = "post_id" value="{{ dweet.id }}" class="btn btn-primary btn-sm">Like</button>
-                </form>  -->
+                <br/><br/>
+                <span class="text-sm text-gray-500">
+                    <h1>Categories :- 
+                        {% for cat in dweet.categories.all %}
+                            {{ cat.name }}
+                        {% endfor %}
+                    </h1>
+                </span>
+
                 <p>Likes :- {{ dweet.total_likes }}</p>
+                <p>Comments :- {{ dweet.comments.count }}</p>
             </div>
             <hr>
             <br/>

@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect, HttpResponse, get_object_or_404, 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.db.utils import IntegrityError
 
 from .models import Profile, Dweet
-from .forms import DweetForm, SearchForm
+from .forms import DweetForm, SearchForm, CommentForm
 from django.contrib.auth.models import User
 
 
@@ -74,7 +74,7 @@ def edit_dweet(request, dweet_id):
         form = DweetForm(request.POST, instance=dweet)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(f'/profile/{request.user.pk}/')
+            return redirect(f'/profile/{request.user.pk}/')
     else:
         form = DweetForm(instance=dweet)
     
@@ -83,7 +83,6 @@ def edit_dweet(request, dweet_id):
 
 @login_required(login_url='dwitter:login')
 def profile(request, pk):
-    print(pk, request.user.pk)
     if not hasattr(request.user, 'profile'):
         missing_profile = Profile(user=request.user.profile)
         #  profile is an attribute or a related object linked to the User model through a one-to-one relationship.
@@ -116,6 +115,7 @@ def dashboard(request):  # sourcery skip: use-named-expression
         dweet = form.save(commit = False)
         dweet.user = request.user
         dweet.save()
+        form.save_m2m()
         return redirect("dwitter:dashboard")
     
     followed_dweets = Dweet.objects.filter(
@@ -144,9 +144,20 @@ def profile_list(request):  # sourcery skip: use-named-expression
 @login_required(login_url='dwitter:login')
 def dweet_discription(request, dweet_id):
     dweet = get_object_or_404(Dweet, pk=dweet_id)
-    context = {
-        'dweet' : dweet,
-    }
+    form = CommentForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        try:
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.dweet = dweet  # Associate the comment with the specific dweet
+            comment.save()
+            return redirect('dwitter:dweet_discription', dweet_id=dweet_id)
+        except IntegrityError as e:
+            print(f"IntegrityError: {e}")
+            # Handle the error, such as displaying an error message to the user
+
+    context = {'dweet': dweet, 'form': form}
     return render(request, "dwitter/dweet_discription.html", context)
 # Create your views here.
 
@@ -158,6 +169,6 @@ def like_post(request, dweet_id):
     else:
         dweet.likes.add(request.user)
 
-    return HttpResponseRedirect(reverse('dwitter:dweet_discription', kwargs={'dweet_id': dweet_id}))
+    return redirect('dwitter:dweet_discription', dweet_id=dweet_id)
 
 

@@ -25,19 +25,37 @@
         {% endif %}
     </form> :- {{dweet.total_likes}}
     <br/><br/>
-    <h2>Comments..</h2>
+    <h2>Comments:-{{dweet.comments.count }}</h2>
 
     {% if not dweet.comments.all %}
         No comments yet...
     {% else %}
-        <a href="">Add comment</a>
-        <br/><br/>
         {% for comment in dweet.comments.all %}
             <strong>{{ comment.user }} - {{ comment.date_added }}</strong>
             <br/>
             {{comment.body}}
+            <br/><br/>
         {% endfor %}
     {% endif %}
+
+    <div class="mt-8">
+
+        <div class="mt-4">
+            <div class="block">
+                <h2 class="text-2xl">Add a Comment</h2>
+            </div>
+            <div class="block">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mt-5 rounded"
+                            type="submit">Comment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 </div>
 {% endblock content %}

@@ -26,6 +26,12 @@ class Profile(models.Model):
         return self.user.username
     
 
+class DweetCategory(models.Model):
+    name = models.CharField(max_length = 255)
+
+    def __str__(self):
+        return self.name
+
 class Dweet(models.Model):
     user = models.ForeignKey(
         User, related_name="dweets", on_delete=models.CASCADE
@@ -33,6 +39,7 @@ class Dweet(models.Model):
     body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='blog_posts')
+    categories = models.ManyToManyField(DweetCategory, related_name='dweetcategories', blank = True)
 
 
     def __str__(self):
@@ -43,6 +50,10 @@ class Dweet(models.Model):
     def total_likes(self):
         return self.likes.count()
     
+    def total_categories(self):
+        return self.categories.count()
+    
+    
     
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
@@ -51,4 +62,4 @@ class Comment(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.dweet.body} - {self.user.username}'
+        return f'{self.dweet.body} - {self.user}'

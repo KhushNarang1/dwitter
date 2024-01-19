@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
-from .models import Profile, Dweet, Comment
+from .models import Profile, Dweet, Comment, DweetCategory
 
 
 class profileInline(admin.StackedInline):
@@ -17,6 +17,7 @@ admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
 admin.site.register(Dweet)
 admin.site.register(Comment)
+admin.site.register(DweetCategory)
 # admin.site.register(Profile)
 
 # Register your models here.
