@@ -143,15 +143,7 @@ button{
         {% csrf_token %} 
         <h3>Signup Here</h3>
 
-        <label for="username">Username</label>
-        <input type="text" placeholder="Username" name="username" id="username">
-
-        <label for="password1">Password</label>
-        <input type="password" placeholder="Password" id="password1" name="password1">
-
-
-        <label for="password2">Confrom Password</label>
-        <input type="password" placeholder="Confrom Password" id="password2" name="password2">
+        {{ form.as_p }}
         <button type="submit">Signup</button>
         
         <a href="{% url 'dwitter:login' %}" >i have already account</a>

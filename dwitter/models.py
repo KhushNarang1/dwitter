@@ -51,6 +51,11 @@ class Dweet(models.Model):
     def total_likes(self):
         return self.likes.count()
     
+    def delete(self, *args, **kwargs):
+        # Delete the associated header_image before deleting the Dweet instance
+        self.header_image.delete()
+        super().delete(*args, **kwargs)
+    
     
     
     

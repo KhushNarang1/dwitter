@@ -5,29 +5,46 @@ from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
 
 from .models import Profile, Dweet
-from .forms import DweetForm, SearchForm, CommentForm
+from .forms import DweetForm, SearchForm, CommentForm, SignUpForm
 from django.contrib.auth.models import User
 
 
 
-def SignupPage(request):  # sourcery skip: last-if-guard
+# def SignupPage(request):  # sourcery skip: last-if-guard
+#     if request.method == 'POST':
+#         uname = request.POST.get('username')
+#         password = request.POST.get('password')
+
+#         # Check if username already exists
+#         if User.objects.filter(username=uname).exists():
+#             return HttpResponse("Username already exists! Please choose a different one.")
+
+#         # If username doesn't exist, create the user
+#         my_user = User.objects.create_user(uname, password=password)
+#         # Optionally, you can handle additional user setup here
+#         my_user.save()
+#         return redirect('dwitter:login')
+
+def SignupPage(request):  # sourcery skip: extract-method, remove-unreachable-code
     if request.method == 'POST':
-        uname = request.POST.get('username')
-        pass1 = request.POST.get('password1')
-        pass2 = request.POST.get('password2')
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            print(username)
+            if User.objects.filter(username=username).exists():
+                return render(request, 'dwitter/signup.html', {'form': form, 'error_message': 'Username already exists. Please choose a different one.'})
 
-        if pass1 != pass2:
-            return HttpResponse("Your password and confirm password are not the same!")
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
 
-        # Check if username already exists
-        if User.objects.filter(username=uname).exists():
-            return HttpResponse("Username already exists! Please choose a different one.")
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.save()
+            return redirect('dwitter:login')
 
-        # If username doesn't exist, create the user
-        my_user = User.objects.create_user(uname, password=pass1)
-        # Optionally, you can handle additional user setup here
-        my_user.save()
-        return redirect('dwitter:login')
+    else:
+        form = SignUpForm()
+
+    return render(request, 'dwitter/signup.html', {'form': form})
 
         
 
