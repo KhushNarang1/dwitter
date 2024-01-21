@@ -14,6 +14,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+AUTHENTICATION_BACKENDS = [
+    'dwitter.backends.EmailBackend',  # Replace 'yourapp' with the name of your Django app
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

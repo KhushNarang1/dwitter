@@ -5,39 +5,24 @@ from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
 
 from .models import Profile, Dweet
-from .forms import DweetForm, SearchForm, CommentForm, SignUpForm
+from .forms import DweetForm, SearchForm, CommentForm, SignUpForm, SignInForm
 from django.contrib.auth.models import User
 
 
-
-# def SignupPage(request):  # sourcery skip: last-if-guard
-#     if request.method == 'POST':
-#         uname = request.POST.get('username')
-#         password = request.POST.get('password')
-
-#         # Check if username already exists
-#         if User.objects.filter(username=uname).exists():
-#             return HttpResponse("Username already exists! Please choose a different one.")
-
-#         # If username doesn't exist, create the user
-#         my_user = User.objects.create_user(uname, password=password)
-#         # Optionally, you can handle additional user setup here
-#         my_user.save()
-#         return redirect('dwitter:login')
 
 def SignupPage(request):  # sourcery skip: extract-method, remove-unreachable-code
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
-            print(username)
+            first_name = form.cleaned_data['name']
             if User.objects.filter(username=username).exists():
                 return render(request, 'dwitter/signup.html', {'form': form, 'error_message': 'Username already exists. Please choose a different one.'})
 
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
-            user = User.objects.create_user(username=username, email=email, password=password)
+            user = User.objects.create_user(username=username, email=email, first_name = first_name, password=password)
             user.save()
             return redirect('dwitter:login')
 
@@ -46,25 +31,43 @@ def SignupPage(request):  # sourcery skip: extract-method, remove-unreachable-co
 
     return render(request, 'dwitter/signup.html', {'form': form})
 
-        
 
+# def LoginPage(request):
+#     # sourcery skip: remove-unnecessary-else, swap-if-else-branches
+#     if request.method=='POST':
+#         username=request.POST.get('username')
+#         pass1=request.POST.get('pass')
+#         user=authenticate(request,username=username,password=pass1)
+#         if user is not None:
+#             login(request,user)
+#             return redirect('dwitter:dashboard')
+#         else:
+#             return HttpResponse ("Username or Password is incorrect!!!")
 
-
-    return render (request,'dwitter/signup.html')
+#     return render (request,'dwitter/login.html')
 
 def LoginPage(request):
-    # sourcery skip: remove-unnecessary-else, swap-if-else-branches
-    if request.method=='POST':
-        username=request.POST.get('username')
-        pass1=request.POST.get('pass')
-        user=authenticate(request,username=username,password=pass1)
-        if user is not None:
-            login(request,user)
-            return redirect('dwitter:dashboard')
-        else:
-            return HttpResponse ("Username or Password is incorrect!!!")
+    # sourcery skip: extract-method, remove-unnecessary-else, swap-if-else-branches
+    if request.method == 'POST':
+        form = SignInForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
 
-    return render (request,'dwitter/login.html')
+            # Authenticate user using email and password
+            user = authenticate(request, email=email, password=password)
+
+            if user is not None:
+                # User is authenticated, log them in
+                login(request, user)
+                return redirect('dwitter:dashboard')  # Replace 'dashboard' with your actual dashboard URL
+            else:
+                # User is not authenticated, show an error message
+                return render(request, 'dwitter/login.html', {'form': form, 'error_message': 'Invalid email or password.'})
+    else:
+        form = SignInForm()
+
+    return render(request, 'dwitter/login.html', {'form': form})
 
 @login_required(login_url='dwitter:login')
 def delete_dweet(request, dweet_id):

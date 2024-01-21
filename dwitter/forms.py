@@ -3,9 +3,14 @@ from .models import Dweet, Comment, DweetCategory, User
 
 class SignUpForm(forms.Form):
     username = forms.CharField(max_length=100)
-    # name = forms.CharField(max_length=100)
+    name = forms.CharField(max_length=100)
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
+
+class SignInForm(forms.Form):
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
 
 
 class DweetForm(forms.ModelForm):
